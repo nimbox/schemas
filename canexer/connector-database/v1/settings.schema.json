@@ -1,0 +1,87 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://schemas.nimbox.com/canexer/connector-database/v1/settings.schema.json",
+    "title": "A canexer connector's settings",
+    "description": "A connector's settings.yaml: one entry per setting an installation gives in its configuration's database.substitutions. See canexer-connector-database's docs/settings.md.",
+    "type": "object",
+    "propertyNames": {
+        "pattern": "^[a-z][A-Za-z0-9]*$"
+    },
+    "additionalProperties": {
+        "$ref": "#/$defs/setting"
+    },
+    "$defs": {
+        "setting": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "type",
+                "description"
+            ],
+            "properties": {
+                "type": {
+                    "description": "What it holds: a whole number, a string of letters, digits, '.', '_' and '-', an SQL expression, or an array of one of them.",
+                    "enum": [
+                        "number",
+                        "string",
+                        "sql",
+                        "array"
+                    ]
+                },
+                "items": {
+                    "description": "An array's items' type.",
+                    "enum": [
+                        "number",
+                        "string",
+                        "sql"
+                    ]
+                },
+                "required": {
+                    "description": "Whether the connector cannot open without it; it then has no default.",
+                    "type": "boolean"
+                },
+                "default": {
+                    "description": "The value of a setting left out, written as the configuration writes it."
+                },
+                "over": {
+                    "description": "For sql: what the expression may name, the query's aliases and the rows they are.",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "What it means, in a sentence.",
+                    "type": "string"
+                },
+                "example": {
+                    "description": "A value a real installation gives, or would."
+                },
+                "versions": {
+                    "description": "The versions of the connector's queries it belongs to; every version when left out.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 1
+                }
+            },
+            "if": {
+                "properties": {
+                    "type": {
+                        "const": "array"
+                    }
+                }
+            },
+            "then": {
+                "required": [
+                    "items"
+                ]
+            },
+            "else": {
+                "not": {
+                    "required": [
+                        "items"
+                    ]
+                }
+            }
+        }
+    }
+}
